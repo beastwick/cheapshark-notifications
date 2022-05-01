@@ -1,0 +1,17 @@
+#!/bin/bash
+
+DIR=$HOME/scripts/cheapshark
+
+python3 $DIR/email-best.py > $DIR/next
+diff -u -Lprev -Lnext $DIR/prev $DIR/next > $DIR/diff
+
+if [ -s "$DIR"/diff  ]; then
+	TO='bostwickbrian@gmail.com'
+	GAMES=$(cat $DIR/next)
+	DIFF=$(cat $DIR/diff)
+
+	echo -e "$GAMES\n\n $DIFF" | mail -a "From: brian@$HOSTNAME" -s "$HOSTNAME, Best Cheapshark Deals" $TO
+	echo "$GAMES, email sent to $TO"
+fi	
+
+cp $DIR/next $DIR/prev
