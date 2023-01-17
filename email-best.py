@@ -1,8 +1,9 @@
 #import pdb
 
-import requests
 import json
 import pprint
+import requests
+import subprocess
 from operator import itemgetter
 
 def storeText(id):
@@ -54,7 +55,7 @@ data = resp.json()
 games = []
 
 for deal in data:
-  if float(deal['dealRating']) > 9.0 or int(deal['metacriticScore']) >= 90:
+  if float(deal['dealRating']) >= 9.0 or (float(deal['dealRating']) >= 8.0 and int(deal['metacriticScore']) >= 90):
     details = (deal['gameID'], deal['title'], float(deal['salePrice']), storeText(deal['storeID']), deal['metacriticScore'])
     games.append(details)
 
@@ -63,3 +64,5 @@ games = sorted(games, key=itemgetter(2,4))
 
 for game in games:
     print('$' + format(game[2], '.2f') + ', ' + game[1] + ', ' + game[3])
+
+#subprocess.Popen['/bin/sh', '-c', 'sh email-best']

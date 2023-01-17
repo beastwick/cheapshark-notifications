@@ -21,14 +21,12 @@ python3 $DIR/email-best.py > $DIR/next
 diff -u -Lprev -Lnext $DIR/prev $DIR/next > $DIR/diff
 
 if [ -s "$DIR"/diff  ]; then
-	TO='bostwickbrian@gmail.com'
+	TO='bostwickbrian@gmail.com,ogiewan@optonline.net' #6316557180@vtext.com
   SUBJECT="$HOSTNAME, Best Cheapshark Deals"
 	GAMES=$(cat $NEXT)
-	DIFF=$(sed -e '1,3d; s/^[ t]*//; /^-$/d; /^+$/d' < $DIFF)
+	DIFF=$(sed -e '1,3d; /^-$/d; /^+$/d' < $DIFF)
 
-  echo DIFF
-
-  #echo -e "Subject: $SUBJECT\n\n$GAMES\n\n $DIFF" | sendmail -v $TO
+  echo -e "Subject: $SUBJECT\n\nSales:\n\n$GAMES\n\nChanges:\n\n$DIFF" | sendmail -v $TO
 fi	
 
 cp $DIR/next $DIR/prev
