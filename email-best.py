@@ -1,64 +1,65 @@
+#import pdb
+
 import requests
 import json
 import pprint
 from operator import itemgetter
 
+def storeText(id):
+  match int(id):
+    case 1:
+      return "Steam"
+    case 2:
+      return "GamersGate"
+    case 3:
+      return "GreenManGaming"
+    case 7:
+      return "GOG"
+    case 8:
+      return "Origin"
+    case 11:
+      return "Humble Bundle"
+    case 13:
+      return "Ubisoft Store"
+    case 15:
+      return "Fanatical"
+    case 21:
+      return "WinGameStore"
+    case 23:
+      return "GameBillet"
+    case 24:
+      return "Voidu"
+    case 25:
+      return "Epic Games"
+    case 27:
+      return "Gamesplanet"
+    case 28:
+      return "Gamesload"
+    case 30:
+      return "IndieGala"
+    case 31:
+      return "Blizzard Shop"
+    case 33:
+      return "DLGamer"
+    case 34:
+      return "Noctre"
+    case 35:
+      return "DreamGame"
+    case _:
+      return "Check Cheapshark.com for originating site."
+
 resp = requests.get(url='https://www.cheapshark.com/api/1.0/deals?&pageSize=60&pageNumber=0')
 data = resp.json()
+
 games = []
 
 for deal in data:
-  if float(deal['dealRating']) > 8.0 and int(deal['metacriticScore']) > 60:
-    details = (deal['gameID'], deal['title'], float(deal['salePrice'])) #, deal['storeID'])
+  if float(deal['dealRating']) > 9.0 or int(deal['metacriticScore']) >= 90:
+    details = (deal['gameID'], deal['title'], float(deal['salePrice']), storeText(deal['storeID']), deal['metacriticScore'])
     games.append(details)
 
 games = set(games)
-games = sorted(games, key=itemgetter(2,0))
+games = sorted(games, key=itemgetter(2,4))
 
-prev=''
 for game in games:
-  if (prev != game[1]):
-    prev = game[1]
-    print(game[1] + ', $' + format(game[2], '.2f'))
-  else:
-    continue
-    
-
-#def storeText(id):
-  #id = id - 1
-  #match id:
-    #case 0:
-      #return "steam"
-    #case 1:
-      #return "gamersgate"
-    #case 2:
-      #return "greenmangaming"
-    #case 3:
-      #return ""
-    #case 4:
-    #case 5:
-    #case 6:
-    #case 7:
-    #case 8:
-    #case 9:
-    #case 10:
-    #case 11:
-    #case 12:
-    #case 13:
-    #case 14:
-    #case 15:
-    #case 16:
-    #case 17:
-    #case 18:
-    #case 19:
-    #case 20:
-    #case 21:
-    #case 22:
-    #case 23:
-    #case 24:
-    #case 25:
-    #case 26:
-    #case 27:
-    #case 28:
-    #case 29:
-    #case _:
+    print('$' + format(game[2], '.2f') + ', ' + game[1] + ', ' + game[3])

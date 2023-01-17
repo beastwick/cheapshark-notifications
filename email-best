@@ -1,17 +1,34 @@
 #!/bin/bash
 
-DIR=$HOME/scripts/cheapshark
+DIR=.
+PREV=$DIR/prev
+NEXT=$DIR/next
+DIFF=$DIR/diff
+
+if [ ! -f "$PREV" ]; then
+  touch $PREV 
+fi
+
+if [ ! -f "$NEXT" ]; then
+  touch $NEXT 
+fi
+
+if [ ! -f "$DIFF" ]; then
+  touch $DIFF 
+fi
 
 python3 $DIR/email-best.py > $DIR/next
 diff -u -Lprev -Lnext $DIR/prev $DIR/next > $DIR/diff
 
 if [ -s "$DIR"/diff  ]; then
 	TO='bostwickbrian@gmail.com'
-	GAMES=$(cat $DIR/next)
-	DIFF=$(cat $DIR/diff)
+  SUBJECT="$HOSTNAME, Best Cheapshark Deals"
+	GAMES=$(cat $NEXT)
+	DIFF=$(sed -e '1,3d; s/^[ t]*//; /^-$/d; /^+$/d' < $DIFF)
 
-	echo -e "$GAMES\n\n $DIFF" | mail -a "From: brian@$HOSTNAME" -s "$HOSTNAME, Best Cheapshark Deals" $TO
-	echo "$GAMES, email sent to $TO"
+  echo DIFF
+
+  #echo -e "Subject: $SUBJECT\n\n$GAMES\n\n $DIFF" | sendmail -v $TO
 fi	
 
 cp $DIR/next $DIR/prev
