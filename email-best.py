@@ -69,10 +69,24 @@ for game in games:
 
 prev = (open('prev', 'r')).readlines()
 
+# What is free.
+free = []
+for entry in sales:
+  if re.match(r'.*\$0\.00.*', entry):
+    free.append(entry)
+
 # What is new.
 new = sales.copy()
 for old in prev:
-  new.remove(old)
+  if old in new:
+    new.remove(old)
+
+# What is gone.
+gone = prev.copy()
+if prev:
+    for sale in sales:
+      if sale in gone:
+        gone.remove(sale)
 
 # What is the same.
 same = []
@@ -80,30 +94,29 @@ for sale in sales:
   if sale in prev:
     same.append(sale)
 
-# What is gone.
-gone = prev.copy()
-if prev:
-    for sale in sales:
-      gone.remove(sale)
-
 prev =(open('prev', 'w'))
 for sale in sales:
   prev.write(sale)
 prev.close()
 
-if new:
-  print('New:\n')
-  for entry in new:
+if free:
+  print('\nFree:\n')
+  for entry in free:
     print(entry, end='')
 
-if same:
-  print('\nSame:\n')
-  for entry in same:
+if new:
+  print('\nNew:\n')
+  for entry in new:
     print(entry, end='')
 
 if gone:
   print('\nGone:\n')
   for entry in gone:
+    print(entry, end='')
+    
+if same:
+  print('\nSame:\n')
+  for entry in same:
     print(entry, end='')
 
 #if new or gone:

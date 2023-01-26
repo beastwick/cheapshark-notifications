@@ -1,29 +1,11 @@
 #!/bin/bash
 
-DIR=.
-PREV=$DIR/prev-sh
-NEXT=$DIR/next-sh
-#DIFF=$DIR/diff-sh
+NEXT=next-sh
 
-if [ ! -f "$PREV" ]; then
-  touch $PREV 
-fi
+python3 email-best.py > $NEXT
 
-if [ ! -f "$NEXT" ]; then
-  touch $NEXT 
-fi
+TO='bostwickbrian@gmail.com,ogiewan@optonline.net'
+SUBJECT="$(hostname), Best Cheapshark Deals"
+GAMES=$(cat $NEXT)
 
-python3 $DIR/email-best.py > $NEXT
-#diff -u -Lprev -Lnext $PREV $NEXT > $DIFF
-
-#if [ -z "cat $DIFF" ]; then
-	TO='bostwickbrian@gmail.com,ogiewan@optonline.net' #6316557180@vtext.com
-        SUBJECT="$HOSTNAME, Best Cheapshark Deals"
-	GAMES=$(cat $NEXT)
-	#DIFF=$(sed -e '1,3d; /^-$/d; /^+$/d' < $DIFF)
-
-  #mta=/usr/bin/msmtp
-  echo -e "Subject: $SUBJECT\n\n$GAMES" | /usr/bin/msmtp -a default $TO
-#fi	
-
-cp $NEXT $PREV
+echo "Subject: $SUBJECT\n\n$GAMES" | /usr/sbin/sendmail $TO
