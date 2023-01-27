@@ -65,7 +65,11 @@ games = sorted(games, key=itemgetter(2,4))
 
 sales = []
 for game in games:
-  sales.append('$' + format(game[2], '.2f') + ', ' + game[1] + ', ' + game[3] + '\n') 
+  metacritic = ''
+  if int(game[4]) > 0:
+    metacritic = ', ' + game[4]
+    
+  sales.append('$' + format(game[2], '.2f') + ', ' + game[1] + ', ' + game[3] + metacritic + '\n') 
 
 prev = (open('prev', 'r')).readlines()
 
@@ -73,7 +77,7 @@ prev = (open('prev', 'r')).readlines()
 free = []
 for entry in sales:
   if re.match(r'.*\$0\.00.*', entry):
-    free.append(entry)
+    free.append(entry) 
 
 # What is new.
 new = sales.copy()
@@ -92,6 +96,8 @@ if prev:
 same = []
 for sale in sales:
   if sale in prev:
+    if re.match(r'.*\$0\.00.*', sale):
+      continue
     same.append(sale)
 
 prev =(open('prev', 'w'))
@@ -118,6 +124,3 @@ if same:
   print('\nSame:\n')
   for entry in same:
     print(entry, end='')
-
-#if new or gone:
-  #subprocess.Popen(['/usr/bin/msmtp','-a default','bostwickbrian@gmail.com', 'Subject:Cheapshark Best Deals\n\nTest'], stdout=subprocess.PIPE, universal_newlines=True) 
