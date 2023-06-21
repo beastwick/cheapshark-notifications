@@ -1,11 +1,18 @@
 #!/bin/bash
 
+PREV=prev-sh
 NEXT=next-sh
 
 python3 email-best.py > $NEXT
 
-TO='bostwickbrian@gmail.com,ogiewan@optonline.net'
-SUBJECT="$(hostname), Best Cheapshark Deals"
-GAMES=$(cat $NEXT)
+CMD=$(cmp --silent -- "$PREV" "$NEXT")
 
-echo "Subject: $SUBJECT\n\n$GAMES" | /usr/sbin/sendmail $TO
+if [ "$?" -ne 0 ]; then
+  TO='bostwickbrian@gmail.com,5166374271@vtext.com' #,ogiewan@optonline.net'
+  SUBJECT="Free Games"
+  GAMES=$(cat $NEXT)
+
+  echo "$GAMES" | mail -s "$SUBJECT" $TO
+
+  cp $NEXT $PREV
+fi
