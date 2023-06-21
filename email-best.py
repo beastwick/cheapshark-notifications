@@ -144,5 +144,3 @@ if gone:
 
 if len(body):
     email(email_config['to'], email_config['subject'], body)
-else:
-    print('nothing to send')
