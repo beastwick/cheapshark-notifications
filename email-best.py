@@ -118,17 +118,17 @@ prev.close()
 
 body = ''
 
-if free:
-  body += "Free:\n"
-  for entry in free:
-    body += entry
-  body += "\n"
-
-#if new:
-  #body += "New:\n"
-  #for entry in new:
+#if free:
+  #body += "Free:\n"
+  #for entry in free:
     #body += entry
   #body += "\n"
+
+if new:
+  body += "New:\n"
+  for entry in new:
+    body += entry
+  body += "\n"
 
 if gone:
   body += "Gone:\n"
@@ -142,4 +142,7 @@ if gone:
     #body += entry
   #body += "\n"
 
-email(email_config['to'], email_config['subject'], body)
+if len(body):
+    email(email_config['to'], email_config['subject'], body)
+else:
+    print('nothing to send')
