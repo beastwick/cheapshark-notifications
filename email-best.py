@@ -77,10 +77,10 @@ prev = (open('prev', 'r')).readlines()
 free = []
 for entry in sales:
   if re.match(r'.*\$0\.00.*', entry):
-    free.append(entry) 
+    free.append(re.sub(r'.*\$0\.00, ', '', entry)) 
 
 # What is new.
-new = sales.copy()
+new = free.copy()
 for old in prev:
   if old in new:
     new.remove(old)
@@ -88,39 +88,39 @@ for old in prev:
 # What is gone.
 gone = prev.copy()
 if prev:
-    for sale in sales:
-      if sale in gone:
-        gone.remove(sale)
+  for sale in free:
+    if sale in gone:
+      gone.remove(sale) # What is left in this list is gone.
 
 # What is the same.
 same = []
-for sale in sales:
+for sale in free:
   if sale in prev:
     if re.match(r'.*\$0\.00.*', sale):
       continue
     same.append(sale)
 
 prev =(open('prev', 'w'))
-for sale in sales:
+for sale in free:
   prev.write(sale)
 prev.close()
 
-if free:
-  print('\nFree:\n')
-  for entry in free:
-    print(entry, end='')
+#if free:
+#  print('\nFree:\n')
+#  for entry in free:
+#    print(entry, end='')
 
 if new:
-  print('\nNew:\n')
+  #print('\nNew:\n')
   for entry in new:
     print(entry, end='')
 
-if gone:
-  print('\nGone:\n')
-  for entry in gone:
-    print(entry, end='')
+#if gone:
+  #print('\nGone:\n')
+  #for entry in gone:
+    #print(entry, end='')
     
-if same:
-  print('\nSame:\n')
-  for entry in same:
-    print(entry, end='')
+#if same:
+#  print('\nSame:\n')
+#  for entry in same:
+#    print(entry, end='')
