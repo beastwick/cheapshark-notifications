@@ -1,11 +1,18 @@
 #import pdb
 
 import json
+import os
 import re
 import requests
 import subprocess
 
 from operator import itemgetter
+
+def email(to, subject, body):
+    os.system('echo "{body}" | mail -s "{subject}" "{to}"'.format(to=to, subject=subject, body=body))
+
+with open("config.json", "r") as jsonfile:
+    email_config = json.load(jsonfile)
 
 def storeText(id):
   if id ==  1:
@@ -68,10 +75,13 @@ for game in games:
   metacritic = ''
   if int(game[4]) > 0:
     metacritic = ', ' + game[4]
-    
+
   sales.append('$' + format(game[2], '.2f') + ', ' + game[1] + ', ' + game[3] + metacritic + '\n') 
 
 prev = (open('prev', 'r')).readlines()
+
+# From here onwards, we are only interested in free $0.00 games.
+# Taken from free and not sales, because the script was altered to just care about free items.
 
 # What is free.
 free = []
@@ -83,14 +93,14 @@ for entry in sales:
 new = free.copy()
 for old in prev:
   if old in new:
-    new.remove(old)
+    new.remove(old) # Only considered new if it has not been seen before.
 
 # What is gone.
 gone = prev.copy()
 if prev:
   for sale in free:
     if sale in gone:
-      gone.remove(sale) # What is left in this list is gone.
+      gone.remove(sale) # What is left in this list is gone, it did not appear in the new list.
 
 # What is the same.
 same = []
@@ -100,27 +110,39 @@ for sale in free:
       continue
     same.append(sale)
 
+# Save the current list of games that met all our criteria.
 prev =(open('prev', 'w'))
 for sale in free:
   prev.write(sale)
 prev.close()
 
+body = ''
+
 #if free:
-#  print('\nFree:\n')
-#  for entry in free:
-#    print(entry, end='')
+  #body += "Free:\n"
+  #for entry in free:
+    #body += entry
+  #body += "\n"
 
 if new:
-  #print('\nNew:\n')
+  body += "New:\n"
   for entry in new:
-    print(entry, end='')
+    body += entry
+  body += "\n"
 
-#if gone:
-  #print('\nGone:\n')
-  #for entry in gone:
-    #print(entry, end='')
-    
+if gone:
+  body += "Gone:\n"
+  for entry in gone:
+    body += entry
+  body += "\n"
+
 #if same:
-#  print('\nSame:\n')
-#  for entry in same:
-#    print(entry, end='')
+  #body += "Same:\n"
+  #for entry in same:
+    #body += entry
+  #body += "\n"
+
+if len(body):
+    email(email_config['to'], email_config['subject'], body)
+else:
+    print('nothing to send')
